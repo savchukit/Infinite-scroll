@@ -1,24 +1,30 @@
-.form-container {
-  width: 500px;
-  margin: 100px auto;
+html,
+body {
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
 }
 
-.form-group {
-  margin-bottom: 20px;
+.form-content {
+  display: flex;
+  justify-content: center;
+  margin: 50px 0 30px;
 }
 
-.btn-submit {
-  margin-top: 10px;
+.input-text {
+  margin-right: 10px;
+  text-indent: 5px;
 }
 
-.error {
-  color: red;
+.images-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 0 50px;
 }
 
-.valid {
-  border: 2px solid green;
-}
-
-.invalid {
-  border: 2px solid red;
+.image {
+  width: 25%;
+  margin: 5px;
 }

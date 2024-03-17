@@ -1,75 +1,43 @@
-const form = document.querySelector(".form");
-const inputFields = form.getElementsByClassName("form-control");
+const imagesContainer = document.querySelector(".images-container");
+const inputField = document.querySelector(".input-text");
 
-for (const item of inputFields) {
-  item.addEventListener("blur", (event) => {
-    validateForm(event);
+const fetchImages = (page = 1) => {
+  let previous = page;
+  return async (query) => {
+    try {
+      const result = await fetch(
+        `https://pixabay.com/api/?key=42675904-6fbcd739c8c1ceef23a8515ae&q=${query}&page=${previous}`
+      );
+      previous++;
+      return await result.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+const testFunc = fetchImages();
+const renderImages = async (query) => {
+  const images = await testFunc(query, 1);
+  console.log(images);
+  // imagesContainer.innerHTML = null;
+  images?.hits?.forEach((item) => {
+    const img = document.createElement("img");
+    img.classList.add("image");
+    img.src = item.webformatURL;
+    imagesContainer.appendChild(img);
   });
-}
-
-const setError = (element, message) => {
-  const errorSection = element.parentElement.querySelector(".error");
-  errorSection.innerText = message;
-  element.classList.add("invalid");
-  element.classList.remove("valid");
 };
 
-const setValid = (element) => {
-  const errorSection = element.parentElement.querySelector(".error");
-  errorSection.innerText = "";
-  element.classList.remove("invalid");
-  element.classList.add("valid");
-};
+inputField.addEventListener("input", (e) => {
+  renderImages(e.target.value);
+});
 
-const validateEmail = (email) => {
-  const regex = /^[a-z0-9]+@[a-z]+\.[a-z]{2,3}$/;
-
-  if (email.value === "") {
-    setError(email, "Email is required");
-  } else if (!regex.test(email.value)) {
-    setError(email, "Email is incorrect");
-  } else {
-    setValid(email);
+window.addEventListener("scroll", () => {
+  const viewportHeight = document.documentElement.clientHeight;
+  const scrolledY = window.scrollY;
+  const pageHeight = document.documentElement.scrollHeight;
+  if (Math.ceil(scrolledY + viewportHeight) >= pageHeight) {
+    renderImages(inputField.value);
   }
-};
-
-const validatePassword = (password) => {
-  const regex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/;
-
-  if (password.value === "") {
-    setError(password, "Password is required");
-  } else if (!regex.test(password.value)) {
-    setError(
-      password,
-      "Password must contain at least 8 symbols, one digit and one special character"
-    );
-  } else {
-    setValid(password);
-  }
-};
-
-const validatePasswordConfirm = (passwordConfirm) => {
-  if (passwordConfirm.value === "") {
-    setError(passwordConfirm, "Confirmation password is required");
-  } else if (passwordConfirm.value !== password.value) {
-    setError(passwordConfirm, "Password doesn't match!");
-  } else {
-    setValid(passwordConfirm);
-  }
-};
-
-const validateForm = (event) => {
-  switch (event.target.id) {
-    case "email":
-      validateEmail(event.target);
-      break;
-    case "password":
-      validatePassword(event.target);
-      break;
-    case "passwordConfirm":
-      validatePasswordConfirm(event.target);
-      break;
-    default:
-      alert("Validation error!");
-  }
-};
+});
